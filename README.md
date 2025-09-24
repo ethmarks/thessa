@@ -1,5 +1,7 @@
 # Thessa
 
+[https://ethmarks.github.io/thessa](https://ethmarks.github.io/thessa)
+
 An AI-powered thesaurus that generates synonyms using Google's Gemini API. Enter any word and discover common alternatives, rare archaisms, and multilingual cognates.
 
 ## What is Thessa?
