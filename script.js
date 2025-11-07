@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const aboutThessaModal = document.getElementById("about-thessa-modal");
     const thessaInfoBtn = document.getElementById("thessa-info-btn");
     const aboutModalCloseBtn = document.getElementById("about-modal-close-btn");
-    const settingsBtn = document.getElementById("settings-btn");
 
     const definitionPopover = document.getElementById("definition-popover");
     const popoverWordTitle = document.getElementById("popover-word");
@@ -26,59 +25,9 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentOpenPopoverTarget = null;
     let currentSynonymIsBulgarian = false;
 
-    // API Key related variables and constants
-    let userApiKey = "";
-    const API_KEY_STORAGE_KEY = "thessaUserApiKey";
-    const apiKeyModal = document.getElementById("apiKeyModal");
-    const apiKeyInput = document.getElementById("apiKeyInput");
-    const saveApiKeyBtn = document.getElementById("saveApiKeyBtn");
-    const apiKeyModalCloseBtn = document.getElementById("apiKeyModalCloseBtn");
-    const apiKeyErrorEl = document.getElementById("apiKeyError");
-
     document.getElementById("word-input").value = "";
-    // Don't focus wordInput immediately if API key modal might show
     document.body.classList.remove("has-results"); // Ensure clean state on load
-
-    // API Key Modal Setup
-    if (!loadApiKey()) {
-        showModal(apiKeyModal);
-        apiKeyInput.focus(); // Focus API key input if modal is shown
-    } else {
-        wordInput.focus(); // Focus main input if key exists
-    }
-
-    saveApiKeyBtn.addEventListener("click", () => {
-        const key = apiKeyInput.value.trim();
-        if (saveApiKey(key)) {
-            // Optional: re-focus main input after successful save
-            // wordInput.focus();
-        }
-    });
-
-    apiKeyModalCloseBtn.addEventListener("click", () => {
-        hideModal(apiKeyModal);
-    });
-    apiKeyModal.addEventListener("click", (event) => {
-        if (event.target === apiKeyModal) {
-            if (!userApiKey) {
-                apiKeyErrorEl.textContent =
-                    "An API Key is required. Click the 'x' or enter a key.";
-                apiKeyErrorEl.style.display = "block";
-            } else {
-                hideModal(apiKeyModal);
-            }
-        }
-    });
-
-    settingsBtn.addEventListener("click", () => {
-        apiKeyInput.value = userApiKey || "";
-        apiKeyErrorEl.style.display = "none";
-        showModal(apiKeyModal);
-        apiKeyInput.focus();
-    });
-
-    document.getElementById("word-input").focus();
-    document.body.classList.remove("has-results"); // Ensure clean state on load
+    wordInput.focus(); // Focus main input on load
 
     generateBtn.addEventListener("click", fetchSynonyms);
     wordInput.addEventListener("keypress", (event) => {
@@ -95,16 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (event.key === "Escape") {
             if (aboutThessaModal.style.display === "flex") {
                 hideModal(aboutThessaModal);
-            } else if (apiKeyModal.style.display === "flex") {
-                if (userApiKey) {
-                    hideModal(apiKeyModal);
-                } else {
-                    apiKeyErrorEl.textContent =
-                        "An API Key is required. Please enter one or click 'x' if you wish to close this and add it later via settings.";
-                    apiKeyErrorEl.style.display = "block";
-                }
-            }
-            else if (definitionPopover.classList.contains("visible")) {
+            } else if (definitionPopover.classList.contains("visible")) {
                 hideDefinitionPopover();
             }
         }
@@ -122,57 +62,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    function loadApiKey() {
-        const storedKey = localStorage.getItem(API_KEY_STORAGE_KEY);
-        if (storedKey) {
-            userApiKey = storedKey;
-            apiKeyErrorEl.style.display = "none";
-            return true;
-        }
-        return false;
-    }
 
-    function saveApiKey(key) {
-        if (!key || key.trim() === "") {
-            apiKeyErrorEl.textContent = "API Key cannot be empty.";
-            apiKeyErrorEl.style.display = "block";
-            return false;
-        }
-        localStorage.setItem(API_KEY_STORAGE_KEY, key);
-        userApiKey = key;
-        apiKeyErrorEl.style.display = "none";
-        hideModal(apiKeyModal);
-        displayMessage(
-            "API Key saved successfully. You can now use Thessa.",
-            "info"
-        );
-        // Clear previous search results or errors from main view if any
-        clearResultsAndMessages();
-        wordInput.focus();
-        return true;
-    }
 
     function getApiUrl() {
-        if (!userApiKey) {
-            return null;
-        }
-        return `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${userApiKey}`;
+        return `https://ch.at/v1/chat/completions`;
     }
 
     async function fetchSynonyms() {
         const word = wordInput.value.trim();
 
         document.body.classList.remove("has-results");
-
-        if (!userApiKey) {
-            displayMessage(
-                "API Key is not set. Please provide your API key via the settings (⚙️ icon) or the prompt.",
-                "error"
-            );
-            showModal(apiKeyModal);
-            apiKeyInput.focus();
-            return;
-        }
 
         if (!word) {
             displayMessage("Please enter a word.", "error");
@@ -188,23 +87,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const prompt = `Provide a list of diverse English synonyms for "${word}", limited to a maximum of ${NUM_OF_SYNONYMS}. Include some common synonyms as well as rare, esoteric ones. The ${NUM_OF_SYNONYMS}th and final synonym should be in Bulgarian. "${word}" cannot be in your list of synonyms. No repeats. Capitalize the first letter of each synonym. Newline separated. Each line should ONLY include the synonym. NEVER anything other than the synonym on the line. NEVER include parenthesis. Your response should only include the list without any introductory or concluding text. If none, say "No synonyms found for ${word}."`;
 
         const currentApiUrl = getApiUrl();
-        if (!currentApiUrl) {
-            // Should be caught by the earlier check, but good safety
-            displayMessage("API Key is missing. Cannot fetch synonyms.", "error");
-            showModal(apiKeyModal);
-            loadingSpinner.style.display = "none";
-            generateBtn.disabled = false;
-            generateBtn.innerHTML = `...`; // Reset button icon
-            return;
-        }
 
         try {
             const response = await fetch(currentApiUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { temperature: 0.65, maxOutputTokens: 300 },
+                    messages: [{ role: "user", content: prompt }],
+                    temperature: 0.65,
+                    max_tokens: 300,
                 }),
             });
 
@@ -220,15 +111,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const data = await response.json();
-            const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            const textResponse = data.choices?.[0]?.message?.content;
 
             if (textResponse) {
                 displaySynonyms(textResponse, word);
-            } else if (data.promptFeedback?.blockReason) {
-                displayMessage(
-                    `Content blocked: ${data.promptFeedback.blockReason}`,
-                    "error"
-                );
             } else {
                 displayMessage(
                     "Could not parse synonyms from API response.",
@@ -245,17 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 errorMessage =
                     "Network error. Please check your internet connection.";
             } else if (error.httpStatus) {
-                if ([400, 401, 403].includes(error.httpStatus)) {
-                    errorMessage = `API Error (${error.httpStatus}): ${error.message} This might be due to an invalid or incorrectly configured API Key. Please check and update your key via settings (⚙️).`;
-                    localStorage.removeItem(API_KEY_STORAGE_KEY); // Clear potentially bad key
-                    userApiKey = "";
-                    setTimeout(() => {
-                        showModal(apiKeyModal);
-                        apiKeyInput.focus();
-                    }, 500);
-                } else {
-                    errorMessage = `API Error (${error.httpStatus}): ${error.message}`;
-                }
+                errorMessage = `API Error (${error.httpStatus}): ${error.message}`;
             }
             displayMessage(errorMessage, "error");
         } finally {
@@ -354,15 +230,6 @@ document.addEventListener("DOMContentLoaded", function () {
         popoverErrorText.style.display = "none";
         popoverDefinitionLoader.style.display = "block";
 
-        if (!userApiKey) {
-            // Check API key before fetching definition
-            updatePopoverWithError(
-                "API Key not set. Please configure it in settings (⚙️)."
-            );
-            showModal(apiKeyModal); // Prompt for key
-            return;
-        }
-
         const prompt = `Provide a CONCISE English definition for the word "${word}". Respond with only the definition text, without any introductory phrases or formatting. If the word could have multiple meanings, list them each in a seperate sentence.`;
         const currentApiUrl = getApiUrl();
 
@@ -371,8 +238,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { temperature: 0.3, maxOutputTokens: 200 },
+                    messages: [{ role: "user", content: prompt }],
+                    temperature: 0.3,
+                    max_tokens: 200,
                 }),
             });
             if (!response.ok) {
@@ -386,28 +254,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 throw err;
             }
             const data = await response.json();
-            const definition = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            const definition = data.choices?.[0]?.message?.content;
 
             if (definition) {
                 updatePopoverWithDefinition(definition.trim());
-            } else if (data.promptFeedback?.blockReason) {
-                updatePopoverWithError(
-                    `Definition blocked: ${data.promptFeedback.blockReason}`
-                );
             } else {
                 updatePopoverWithError("Could not parse definition.");
             }
         } catch (error) {
             console.error("Error fetching definition:", error);
             let errorMessage = `API Error: ${error.message || "Unknown."}`;
-            if (error.httpStatus && [400, 401, 403].includes(error.httpStatus)) {
-                errorMessage = `API Error (${error.httpStatus}): Invalid Key or Request. Check settings (⚙️).`;
-                localStorage.removeItem(API_KEY_STORAGE_KEY);
-                userApiKey = "";
-                setTimeout(() => {
-                    showModal(apiKeyModal);
-                    apiKeyInput.focus();
-                }, 200); // Shorter delay for popover
+            if (error.httpStatus) {
+                errorMessage = `API Error (${error.httpStatus}): ${error.message}`;
             }
             updatePopoverWithError(errorMessage);
         }
