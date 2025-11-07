@@ -1,0 +1,25 @@
+{
+  "name": "thessa",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AI-powered thesaurus",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ethmarks/thessa.git"
+  },
+  "keywords": [
+    "thesaurus",
+    "ai",
+    "synonyms"
+  ],
+  "author": "ethmarks",
+  "license": "MIT"
+}
