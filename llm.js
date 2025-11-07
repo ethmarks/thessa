@@ -46,7 +46,7 @@ async function llm(prompt) {
 }
 
 export async function getSynonyms(word, count = 8) {
-  const prompt = `Provide a list of diverse English synonyms for "${word}", limited to a maximum of ${count}. Include some common synonyms as well as rare, esoteric ones. The ${count}th and final synonym should be in Bulgarian. "${word}" cannot be in your list of synonyms. No repeats. Capitalize the first letter of each synonym. Newline separated. Each line should ONLY include the synonym. NEVER anything other than the synonym on the line. NEVER include parenthesis. Your response should only include the list without any introductory or concluding text. If none, say "No synonyms found for ${word}."`;
+  const prompt = `Provide a list of diverse English synonyms for "${word}", limited to a maximum of ${count}. Include some common synonyms as well as rare, esoteric ones. "${word}" cannot be in your list of synonyms. No repeats. Capitalize the first letter of each synonym. Newline separated. Each line should ONLY include the synonym. NEVER anything other than the synonym on the line. NEVER include parenthesis. Your response should only include the list without any introductory or concluding text. If none, say "No synonyms found for ${word}."`;
 
   return await llm(prompt);
 }

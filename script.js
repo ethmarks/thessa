@@ -24,7 +24,6 @@ let copyNotificationTimeout;
 
 const NUM_OF_SYNONYMS = 8;
 let currentOpenPopoverTarget = null;
-let currentSynonymIsBulgarian = false;
 
 document.getElementById("word-input").value = "";
 document.body.classList.remove("has-results"); // Ensure clean state on load
@@ -116,10 +115,8 @@ function displaySynonyms(responseText, originalWord) {
       li.textContent = cleanSynonym;
       li.classList.add("synonym-item");
 
-      const isBulgarianSynonym = /[а-яА-Я]+/g.test(cleanSynonym);
-
       li.addEventListener("click", (e) =>
-        handleSynonymClick(cleanSynonym, e.currentTarget, isBulgarianSynonym),
+        handleSynonymClick(cleanSynonym, e.currentTarget),
       );
       synonymList.appendChild(li);
     });
@@ -146,7 +143,7 @@ function clearResultsAndMessages() {
   document.body.classList.remove("has-results");
 }
 
-function handleSynonymClick(synonym, targetElement, isBulgarian = false) {
+function handleSynonymClick(synonym, targetElement) {
   if (
     targetElement === currentOpenPopoverTarget &&
     definitionPopover.classList.contains("visible")
@@ -165,7 +162,6 @@ function handleSynonymClick(synonym, targetElement, isBulgarian = false) {
   }
 
   currentOpenPopoverTarget = targetElement;
-  currentSynonymIsBulgarian = isBulgarian;
   positionAndShowDefinitionPopover(synonym, targetElement);
   fetchDefinitionForPopover(synonym);
 }
@@ -187,11 +183,7 @@ async function fetchDefinitionForPopover(word) {
 function positionAndShowDefinitionPopover(word, targetElement) {
   definitionPopover.classList.remove("visible", "popover-left");
 
-  let popoverWordContent = word;
-  if (currentSynonymIsBulgarian) {
-    popoverWordContent += " 🇧🇬";
-  }
-  popoverWordTitle.textContent = popoverWordContent;
+  popoverWordTitle.textContent = word;
 
   popoverDefinitionText.textContent = "";
   popoverErrorText.style.display = "none";
@@ -261,7 +253,6 @@ function updatePopoverWithError(message) {
 function hideDefinitionPopover() {
   definitionPopover.classList.remove("visible");
   currentOpenPopoverTarget = null;
-  currentSynonymIsBulgarian = false;
   setTimeout(() => {
     if (!definitionPopover.classList.contains("visible")) {
       definitionPopover.style.display = "none";

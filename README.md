@@ -11,8 +11,8 @@ Thessa (derived from "thesaurus") is a vocabulary expansion tool that leverages 
 ## Features
 
 - 🤖 **AI-Powered**: Uses [ch.at](https://ch.at/) for free, no-auth AI
-- 🌍 **Multilingual Touch**: Always includes a Bulgarian cognate as the 8th synonym
-- 📚 **Diverse Vocabulary**: Provides both common and rare, archaic alternatives
+- 🌍 **Diverse Vocabulary**: Provides both common and rare, archaic alternatives
+
 - 🆓 **Free to Use**: No API key required - works out of the box
 - 🎨 **Clean Interface**: Minimalist design with smooth interactions
 - 📖 **Instant Definitions**: Click any synonym to get AI-generated definitions
@@ -32,4 +32,4 @@ Thessa (derived from "thesaurus") is a vocabulary expansion tool that leverages 
 
 Thessa sends carefully crafted prompts to ch.at to generate exactly 8 synonyms:
 
-> Provide a list of diverse English synonyms for "${word}", limited to a maximum of 8. Include some common synonyms as well as rare, esoteric ones. The 8th and final synonym should be in Bulgarian. "${word}" cannot be in your list of synonyms. No repeats. Capitalize the first letter of each synonym. Newline separated. Each line should ONLY include the synonym. NEVER anything other than the synonym on the line. NEVER include parenthesis. Your response should only include the list without any introductory or concluding text. If none, say "No synonyms found for ${word}."
+> Provide a list of diverse English synonyms for "${word}", limited to a maximum of 8. Include some common synonyms as well as rare, esoteric ones. "${word}" cannot be in your list of synonyms. No repeats. Capitalize the first letter of each synonym. Newline separated. Each line should ONLY include the synonym. NEVER anything other than the synonym on the line. NEVER include parenthesis. Your response should only include the list without any introductory or concluding text. If none, say "No synonyms found for ${word}."
