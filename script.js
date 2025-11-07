@@ -1,3 +1,5 @@
+import { getSynonyms, getDefinition, formatError } from './llm.js';
+
 document.addEventListener("DOMContentLoaded", function () {
     const wordInput = document.getElementById("word-input");
     const generateBtn = document.getElementById("generate-btn");
@@ -64,10 +66,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    function getApiUrl() {
-        return `https://ch.at/v1/chat/completions`;
-    }
-
     async function fetchSynonyms() {
         const word = wordInput.value.trim();
 
@@ -84,56 +82,12 @@ document.addEventListener("DOMContentLoaded", function () {
         generateBtn.disabled = true;
         generateBtn.innerHTML = `\n            <svg class="btn-icon loading-btn-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
 
-        const prompt = `Provide a list of diverse English synonyms for "${word}", limited to a maximum of ${NUM_OF_SYNONYMS}. Include some common synonyms as well as rare, esoteric ones. The ${NUM_OF_SYNONYMS}th and final synonym should be in Bulgarian. "${word}" cannot be in your list of synonyms. No repeats. Capitalize the first letter of each synonym. Newline separated. Each line should ONLY include the synonym. NEVER anything other than the synonym on the line. NEVER include parenthesis. Your response should only include the list without any introductory or concluding text. If none, say "No synonyms found for ${word}."`;
-
-        const currentApiUrl = getApiUrl();
-
         try {
-            const response = await fetch(currentApiUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    messages: [{ role: "user", content: prompt }],
-                    temperature: 0.65,
-                    max_tokens: 300,
-                }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response
-                    .json()
-                    .catch(() => ({ error: { message: response.statusText } }));
-                const err = new Error(
-                    errorData.error?.message || `HTTP error ${response.status}`
-                );
-                err.httpStatus = response.status;
-                throw err;
-            }
-
-            const data = await response.json();
-            const textResponse = data.choices?.[0]?.message?.content;
-
-            if (textResponse) {
-                displaySynonyms(textResponse, word);
-            } else {
-                displayMessage(
-                    "Could not parse synonyms from API response.",
-                    "error"
-                );
-            }
+            const textResponse = await getSynonyms(word, NUM_OF_SYNONYMS);
+            displaySynonyms(textResponse, word);
         } catch (error) {
             console.error("Error fetching synonyms:", error);
-            let errorMessage = `Error: ${error.message || "Unknown API error."}`;
-            if (
-                error.name === "TypeError" &&
-                error.message.toLowerCase().includes("failed to fetch")
-            ) {
-                errorMessage =
-                    "Network error. Please check your internet connection.";
-            } else if (error.httpStatus) {
-                errorMessage = `API Error (${error.httpStatus}): ${error.message}`;
-            }
-            displayMessage(errorMessage, "error");
+            displayMessage(formatError(error), "error");
         } finally {
             loadingSpinner.style.display = "none";
             generateBtn.disabled = false;
@@ -230,44 +184,12 @@ document.addEventListener("DOMContentLoaded", function () {
         popoverErrorText.style.display = "none";
         popoverDefinitionLoader.style.display = "block";
 
-        const prompt = `Provide a CONCISE English definition for the word "${word}". Respond with only the definition text, without any introductory phrases or formatting. If the word could have multiple meanings, list them each in a seperate sentence.`;
-        const currentApiUrl = getApiUrl();
-
         try {
-            const response = await fetch(currentApiUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    messages: [{ role: "user", content: prompt }],
-                    temperature: 0.3,
-                    max_tokens: 200,
-                }),
-            });
-            if (!response.ok) {
-                const errorData = await response
-                    .json()
-                    .catch(() => ({ error: { message: response.statusText } }));
-                const err = new Error(
-                    errorData.error?.message || `HTTP error ${response.status}`
-                );
-                err.httpStatus = response.status;
-                throw err;
-            }
-            const data = await response.json();
-            const definition = data.choices?.[0]?.message?.content;
-
-            if (definition) {
-                updatePopoverWithDefinition(definition.trim());
-            } else {
-                updatePopoverWithError("Could not parse definition.");
-            }
+            const definition = await getDefinition(word);
+            updatePopoverWithDefinition(definition.trim());
         } catch (error) {
             console.error("Error fetching definition:", error);
-            let errorMessage = `API Error: ${error.message || "Unknown."}`;
-            if (error.httpStatus) {
-                errorMessage = `API Error (${error.httpStatus}): ${error.message}`;
-            }
-            updatePopoverWithError(errorMessage);
+            updatePopoverWithError(formatError(error));
         }
     }
 
