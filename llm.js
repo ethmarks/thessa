@@ -46,13 +46,68 @@ async function llm(prompt) {
 }
 
 export async function getSynonyms(word, count = 8) {
-  const prompt = `Provide a list of diverse English synonyms for "${word}", limited to a maximum of ${count}. Include some common synonyms as well as rare, esoteric ones. "${word}" cannot be in your list of synonyms. No repeats. Capitalize the first letter of each synonym. Newline separated. Each line should ONLY include the synonym. NEVER anything other than the synonym on the line. NEVER include parenthesis. Your response should only include the list without any introductory or concluding text. If none, say "No synonyms found for ${word}."`;
+  const prompt = `You are a sophisticated thesaurus that provides ${count} diverse alternatives for any input.
+
+Input: "${word}"
+
+Instructions:
+1. If the input is a SINGLE WORD:
+   - Provide ${count} diverse synonyms
+   - Mix common everyday words and rare archaic words
+
+   <example>
+   "happy":
+   Joyful
+   Elated
+   Euphoric
+   Blissful
+   Cheerful
+   Content
+   Jubilant
+   Exultant
+   </example>
+
+2. If the input is a PHRASE or MULTIPLE WORDS:
+   - Provide ${count} synonymous phrases or expressions
+
+  <example>
+  "break down":
+  Fall apart
+  Collapse
+  Deteriorate
+  Malfunction
+  Disintegrate
+  Deconstruct
+  Breach
+  Dissolve
+  </example>
+
+Always return exactly ${count} synonyms, newline separated. Your response will be interpreted by a script, so include only the newline-separated list without any other text. Do not use commas, asterisks, or dashes.`;
 
   return await llm(prompt);
 }
 
 export async function getDefinition(word) {
-  const prompt = `Provide a CONCISE English definition for the word "${word}". Respond with only the definition text, without any introductory phrases or formatting. If the word could have multiple meanings, list them each in a separate sentence.`;
+  const prompt = `You are a comprehensive dictionary that defines any input intelligently.
+
+Input: "${word}"
+
+Instructions:
+1. If the input is a REAL WORD:
+   - Provide (part of speech) followed by concise definition
+   - For multiple meanings, separate with semicolons
+   - Use clear, accessible language
+
+2. If the input is a PHRASE:
+   - Provide (phrase) followed by explanation of meaning/usage
+   - Focus on the overall concept or idiom meaning
+
+Examples:
+"bank" → "(noun) A financial institution; the edge of a river"
+"sprint" → "(verb) To run at full speed over a short distance; (noun) A short, fast run"
+"break down" → "(phrase) To stop functioning; to analyze in detail"
+
+Return only the definition without introductory text.`;
 
   return await llm(prompt);
 }
