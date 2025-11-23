@@ -6,8 +6,8 @@
 // List of OpenAI-compatible API endpoints to try in order
 // These are free, no-auth endpoints that may have varying reliability
 const API_PROVIDERS = [
-  "https://ch.at/v1/chat/completions",
   "https://api.llm7.io/v1/chat/completions",
+  "https://ch.at/v1/chat/completions",
 ];
 
 /**
@@ -19,6 +19,7 @@ const API_PROVIDERS = [
 async function llm(prompt) {
   const temperature = 0.65;
   const maxTokens = 300;
+  const timeoutMs = 5000; // 5 second timeout
 
   const requestBody = {
     messages: [{ role: "user", content: prompt }],
@@ -31,13 +32,18 @@ async function llm(prompt) {
   // Try each provider in sequence until one succeeds
   for (let i = 0; i < API_PROVIDERS.length; i++) {
     const apiUrl = API_PROVIDERS[i];
+    const abortController = new AbortController();
+    const timeoutId = setTimeout(() => abortController.abort(), timeoutMs);
 
     try {
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
+        signal: abortController.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorData = await response
@@ -60,9 +66,18 @@ async function llm(prompt) {
 
       return textResponse;
     } catch (error) {
-      // ""Store the error and try the next provider
-      lastError = error;
-      console.warn(`Provider ${apiUrl} failed:`, error.message);
+      clearTimeout(timeoutId);
+
+      // Handle timeout errors
+      if (error.name === "AbortError") {
+        lastError = new Error(`Request timed out after ${timeoutMs}ms`);
+        lastError.provider = apiUrl;
+        console.warn(`Provider ${apiUrl} timed out`);
+      } else {
+        // Store the error and try the next provider
+        lastError = error;
+        console.warn(`Provider ${apiUrl} failed:`, error.message);
+      }
 
       // If this isn't the last provider, continue to the next one
       if (i < API_PROVIDERS.length - 1) {
