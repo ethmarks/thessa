@@ -1,48 +1,99 @@
 /**
  * LLM API Module
- * Handles all communication with the ch.at API
+ * Handles communication with multiple OpenAI-compatible API providers with automatic fallback
  */
 
-const API_URL = "https://ch.at/v1/chat/completions";
+// List of OpenAI-compatible API endpoints to try in order
+// These are free, no-auth endpoints that may have varying reliability
+const API_PROVIDERS = [
+  "https://api.llm7.io/v1/chat/completions",
+  "https://ch.at/v1/chat/completions",
+];
 
 /**
- * Makes a chat completion request to the ch.at API
+ * Makes a chat completion request with automatic provider fallback
  * @param {string} prompt - The prompt to send to the API
  * @returns {Promise<string>} - The API response text
- * @throws {Error} - Throws error with message and optional httpStatus property
+ * @throws {Error} - Throws error if all providers fail
  */
 async function llm(prompt) {
   const temperature = 0.65;
   const maxTokens = 300;
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      messages: [{ role: "user", content: prompt }],
-      temperature,
-      max_tokens: maxTokens,
-    }),
-  });
+  const timeoutMs = 5000; // 5 second timeout
 
-  if (!response.ok) {
-    const errorData = await response
-      .json()
-      .catch(() => ({ error: { message: response.statusText } }));
-    const err = new Error(
-      errorData.error?.message || `HTTP error ${response.status}`,
-    );
-    err.httpStatus = response.status;
-    throw err;
+  const requestBody = {
+    messages: [{ role: "user", content: prompt }],
+    temperature,
+    max_tokens: maxTokens,
+  };
+
+  let lastError = null;
+
+  // Try each provider in sequence until one succeeds
+  for (let i = 0; i < API_PROVIDERS.length; i++) {
+    const apiUrl = API_PROVIDERS[i];
+    const abortController = new AbortController();
+    const timeoutId = setTimeout(() => abortController.abort(), timeoutMs);
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+        signal: abortController.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: { message: response.statusText } }));
+        const err = new Error(
+          errorData.error?.message || `HTTP error ${response.status}`,
+        );
+        err.httpStatus = response.status;
+        err.provider = apiUrl;
+        throw err;
+      }
+
+      const data = await response.json();
+      const textResponse = data.choices?.[0]?.message?.content;
+
+      if (!textResponse) {
+        throw new Error("Could not parse response from API");
+      }
+
+      return textResponse;
+    } catch (error) {
+      clearTimeout(timeoutId);
+
+      // Handle timeout errors
+      if (error.name === "AbortError") {
+        lastError = new Error(`Request timed out after ${timeoutMs}ms`);
+        lastError.provider = apiUrl;
+        console.warn(`Provider ${apiUrl} timed out`);
+      } else {
+        // Store the error and try the next provider
+        lastError = error;
+        console.warn(`Provider ${apiUrl} failed:`, error.message);
+      }
+
+      // If this isn't the last provider, continue to the next one
+      if (i < API_PROVIDERS.length - 1) {
+        continue;
+      }
+    }
   }
 
-  const data = await response.json();
-  const textResponse = data.choices?.[0]?.message?.content;
-
-  if (!textResponse) {
-    throw new Error("Could not parse response from API");
+  // If we get here, all providers failed
+  const err = new Error(
+    `All API providers failed. Last error: ${lastError?.message || "Unknown error"}`,
+  );
+  if (lastError?.httpStatus) {
+    err.httpStatus = lastError.httpStatus;
   }
-
-  return textResponse;
+  throw err;
 }
 
 export async function getSynonyms(word, count = 8) {
