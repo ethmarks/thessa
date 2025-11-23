@@ -34,3 +34,7 @@ Thessa's provider list currently consists of:
 
 1. **LLM7.io**: <https://api.llm7.io/v1/chat/completions>
 2. **ch.at**: <https://ch.at/v1/chat/completions>
+
+## License
+
+Licensed under an Apache 2.0 License. See [LICENSE](LICENSE) for more information.
