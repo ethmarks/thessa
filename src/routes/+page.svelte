@@ -1,2 +1,7 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<ethmarks-header active="projects"></ethmarks-header>
+
+<main>
+    <h1>Thessa</h1>
+</main>
+
+<ethmarks-footer source="https://github.com/ethmarks/thessa"></ethmarks-footer>
