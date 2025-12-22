@@ -17,5 +17,17 @@
         font-size: var(--font-size-h4);
         font-family: var(--font-secondary);
         caret-color: var(--color-accent);
+
+        transition-property: border, background, box-shadow;
+        transition-duration: var(--transition-duration);
+        transition-timing-function: var(--transition-timing);
+
+        &:focus {
+            border: var(--border-accent);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow:
+                0 0 0 4px var(--color-accent-transparent-20),
+                0 2px 8px rgba(0, 0, 0, 0.1) inset;
+        }
     }
 </style>
