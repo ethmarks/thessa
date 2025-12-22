@@ -1,31 +1,45 @@
 name: Deploy to GitHub Pages
-
 on:
   push:
     branches:
-      - main
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
+      - "main"
 concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
-  build:
+  build_site:
     runs-on: ubuntu-latest
-    environment:
-      name: thessa
-      url: ${{ steps.deploy_to_pages.outputs.github_pages_url }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
-      - name: Vite GitHub Pages Deployer
-        uses: skywarth/vite-github-pages-deployer@v1.5.0
-        id: deploy_to_pages
+        uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm i
+      - name: build
         env:
-          NODE_ENV: ghpages
+          SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+          BASE_PATH: "/${{ github.event.repository.name }}"
+          NODE_ENV: production
+        run: |
+          npm run build
+      - name: Upload Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "build/"
+  deploy:
+    needs: build_site
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
