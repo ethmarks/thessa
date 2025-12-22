@@ -1,4 +1,36 @@
-<input type="text" placeholder="Enter a word or phrase (e.g. 'brilliant')" />
+<script>
+    import { onMount } from "svelte";
+
+    let inputElement;
+    let query = $state("");
+
+    let { onSubmit = () => {} } = $props();
+
+    onMount(() => {
+        inputElement?.focus();
+    });
+
+    function handleKeydown(event) {
+        if (event.key === "Enter") {
+            handleSubmit();
+        }
+    }
+
+    function handleSubmit() {
+        if (query.trim()) {
+            onSubmit(query.trim());
+            query = "";
+        }
+    }
+</script>
+
+<input
+    type="text"
+    placeholder="Enter a word or phrase (e.g. 'brilliant')"
+    bind:value={query}
+    bind:this={inputElement}
+    onkeydown={handleKeydown}
+/>
 
 <style>
     input {
