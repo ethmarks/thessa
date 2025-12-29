@@ -1,10 +1,14 @@
-import { PUBLIC_LLM_ENDPOINT, PUBLIC_LLM_KEY, PUBLIC_LLM_MODEL } from "$env/static/public";
+import { env } from "$env/dynamic/public";
+
+const env_endpoint = env.PUBLIC_LLM_ENDPOINT;
+const env_key = env.PUBLIC_LLM_KEY || "";
+const env_model = env.PUBLIC_LLM_MODEL || "";
 
 export async function llm(
   prompt,
-  endpoint = PUBLIC_LLM_ENDPOINT,
-  key = PUBLIC_LLM_KEY,
-  model = PUBLIC_LLM_MODEL,
+  endpoint = env_endpoint,
+  key = env_key,
+  model = env_model,
   options = {}
 ) {
   const response = await fetch(endpoint, {
