@@ -1,5 +1,6 @@
 <script>
     import { onMount } from "svelte";
+    import { fade } from "svelte/transition";
 
     let inputElement;
     let query = $state("");
@@ -30,6 +31,7 @@
     bind:value={query}
     bind:this={inputElement}
     onkeydown={handleKeydown}
+    in:fade={{ duration: 100 }}
 />
 
 <style>
