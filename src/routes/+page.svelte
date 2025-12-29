@@ -27,7 +27,7 @@
             {#await getSynonyms(userQuery)}
                 <Spinner></Spinner>
             {:then response}
-                <SynonymList textRaw={response}></SynonymList>
+                <SynonymList query={userQuery} textRaw={response}></SynonymList>
             {/await}
         {/if}
     </div>
@@ -47,7 +47,7 @@
         align-items: center;
         justify-content: center;
         gap: 12px;
-        margin: var(--spacing-xl) 0;
+        margin: var(--spacing-md) 0;
 
         h1 {
             color: var(--color-accent-light);

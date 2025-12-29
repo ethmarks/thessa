@@ -34,7 +34,7 @@
 
 <style>
     input {
-        margin: 0 auto 10rem;
+        margin: var(--spacing-lg) auto 10rem;
         padding: 1rem 1.5rem;
         width: 100%;
         max-width: 800px;

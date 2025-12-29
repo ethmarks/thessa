@@ -74,6 +74,7 @@
         display: flex;
         justify-content: center;
         width: 100%;
+        margin: var(--spacing-xl) 0 10rem;
     }
 
     svg {
