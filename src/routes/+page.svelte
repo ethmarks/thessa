@@ -52,6 +52,7 @@
         justify-content: center;
         padding: 0;
         margin-bottom: var(--spacing-lg);
+        --main-margin-sides: var(--spacing-md);
     }
 
     #heading-container {
