@@ -12,7 +12,15 @@
         showQueryBar = false;
         userQuery = query;
     }
+
+    function handleKeydown(event) {
+        if (event.key === "Backspace") {
+            showQueryBar = true;
+        }
+    }
 </script>
+
+<svelte:window onkeydown={handleKeydown} />
 
 <ethmarks-header active="projects"></ethmarks-header>
 
