@@ -1,7 +1,7 @@
 <script>
     import QueryBar from "$lib/components/query-bar.svelte";
     import Spinner from "$lib/components/spinner.svelte";
-    import { llm } from "$lib/assets/llm.js";
+    import { getSynonyms } from "$lib/assets/llm.js";
 
     let showQueryBar = $state(true);
     let userQuery = $state("");
@@ -22,7 +22,7 @@
         {#if showQueryBar}
             <QueryBar onSubmit={querySubmit}></QueryBar>
         {:else}
-            {#await llm((prompt = `what are some synonyms for ${userQuery}`))}
+            {#await getSynonyms(userQuery)}
                 <Spinner></Spinner>
             {:then response}
                 <p>{response}</p>
