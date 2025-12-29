@@ -1,10 +1,13 @@
 <script>
     import QueryBar from "$lib/components/query-bar.svelte";
+    import { llm } from "$lib/assets/llm.js";
 
     let showQueryBar = $state(true);
+    let userQuery = $state("");
 
-    function querySubmit() {
+    function querySubmit(query) {
         showQueryBar = false;
+        userQuery = query;
     }
 </script>
 
@@ -18,7 +21,11 @@
         {#if showQueryBar}
             <QueryBar onSubmit={querySubmit}></QueryBar>
         {:else}
-            <p>pretend there are results here</p>
+            {#await llm((prompt = `what are some synonyms for ${userQuery}`))}
+                <p>waiting...</p>
+            {:then response}
+                <p>{response}</p>
+            {/await}
         {/if}
     </div>
 </main>
