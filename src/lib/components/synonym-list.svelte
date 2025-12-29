@@ -14,8 +14,8 @@
 <div id="container">
     <h2>Synonyms for "{query}"</h2>
     <ul>
-        {#each synonyms as synonymText}
-            <Synonym text={synonymText}></Synonym>
+        {#each synonyms as synonymText, i}
+            <Synonym text={synonymText} index={i}></Synonym>
         {/each}
     </ul>
 </div>

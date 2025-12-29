@@ -1,9 +1,9 @@
 <script>
-    let { text } = $props();
+    let { text, index } = $props();
 </script>
 
 <li>
-    <button>{text}</button>
+    <button style="--animation-delay: {index * 0.01}s">{text}</button>
 </li>
 
 <style>
@@ -23,6 +23,10 @@
         font-family: inherit;
         font-size: inherit;
 
+        animation: fade-in-from-top-left 0.2s ease-out forwards;
+        animation-delay: var(--animation-delay);
+        opacity: 0;
+
         &:hover {
             background-color: rgba(255, 255, 255, 0.05);
             border-color: var(--border-accent);
@@ -33,6 +37,17 @@
         &:active {
             transform: translateY(0);
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+    }
+
+    @keyframes fade-in-from-top-left {
+        0% {
+            opacity: 0;
+            transform: translate(-20px, -20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translate(0, 0);
         }
     }
 </style>
