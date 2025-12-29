@@ -52,7 +52,10 @@
         justify-content: center;
         padding: 0;
         margin-bottom: var(--spacing-lg);
-        --main-margin-sides: var(--spacing-md);
+
+        @media (max-width: 768px) {
+            --main-margin-sides: var(--spacing-md);
+        }
     }
 
     #heading-container {
