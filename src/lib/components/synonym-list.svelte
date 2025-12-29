@@ -7,7 +7,7 @@
         textRaw
             .toLowerCase()
             .replace(/[!.,;?]+$/, "")
-            .split(", "),
+            .split("\n"),
     );
 </script>
 

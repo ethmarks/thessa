@@ -1,6 +1,6 @@
 import { env } from "$env/dynamic/private";
 
-const MAX_PROMPT_LENGTH = 1000;
+const MAX_PROMPT_LENGTH = 2000;
 const REQUEST_TIMEOUT = 5000; // 5 seconds
 
 /**
