@@ -37,9 +37,11 @@
 
 <style>
     main {
-        min-height: calc(100vh - var(--main-margin-top) - 45px);
+        --main-margin-top: 5rem;
+        min-height: calc(100vh - var(--main-margin-top) - 10rem - 45px);
         justify-content: center;
         padding: 0;
+        margin-bottom: var(--spacing-lg);
     }
 
     #heading-container {

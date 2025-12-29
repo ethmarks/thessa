@@ -40,6 +40,6 @@
         width: 100%;
         list-style: none;
         padding: 0;
-        margin: 0 auto 10rem;
+        margin: 0 auto;
     }
 </style>
