@@ -1,5 +1,11 @@
 <script>
     import QueryBar from "$lib/components/query-bar.svelte";
+
+    let showQueryBar = $state(true);
+
+    function querySubmit() {
+        showQueryBar = false;
+    }
 </script>
 
 <ethmarks-header active="projects"></ethmarks-header>
@@ -9,7 +15,11 @@
         <h1 class="nomint">Thessa</h1>
     </div>
     <div id="content-container">
-        <QueryBar></QueryBar>
+        {#if showQueryBar}
+            <QueryBar onSubmit={querySubmit}></QueryBar>
+        {:else}
+            <p>pretend there are results here</p>
+        {/if}
     </div>
 </main>
 
