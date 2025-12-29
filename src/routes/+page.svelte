@@ -1,6 +1,8 @@
 <script>
     import QueryBar from "$lib/components/query-bar.svelte";
     import Spinner from "$lib/components/spinner.svelte";
+    import SynonymList from "$lib/components/synonym-list.svelte";
+
     import { getSynonyms } from "$lib/assets/llm.js";
 
     let showQueryBar = $state(true);
@@ -25,7 +27,7 @@
             {#await getSynonyms(userQuery)}
                 <Spinner></Spinner>
             {:then response}
-                <p>{response}</p>
+                <SynonymList textRaw={response}></SynonymList>
             {/await}
         {/if}
     </div>
