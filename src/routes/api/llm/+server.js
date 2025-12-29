@@ -1,8 +1,18 @@
 import { json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 
+const MAX_PROMPT_LENGTH = 500;
+const REQUEST_TIMEOUT = 5000;
+
 export async function POST({ request }) {
-  const { prompt} = await request.json();
+  const { prompt } = await request.json();
+
+  if (!prompt || typeof prompt !== 'string') {
+    return json({ error: 'Invalid prompt' }, { status: 400 });
+  }
+  if (prompt.length > MAX_PROMPT_LENGTH) {
+    return json({ error: 'Prompt too long' }, { status: 400 });
+  }
 
   const endpoint = env.LLM_ENDPOINT;
   const key = env.LLM_KEY || '';
@@ -13,6 +23,9 @@ export async function POST({ request }) {
   }
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -22,13 +35,16 @@ export async function POST({ request }) {
       body: JSON.stringify({
         model: defaultModel,
         messages: [{ role: 'user', content: prompt }],
-      })
+      }),
+      signal: controller.signal
     });
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
-      const errorText = await response.text();
+      console.error('LLM API error:', response.status, await response.text());
       return json(
-        { error: `LLM API error: ${response.status}`, details: errorText },
+        { error: `LLM API error: ${response.status}` },
         { status: response.status }
       );
     }
@@ -36,6 +52,10 @@ export async function POST({ request }) {
     const data = await response.json();
     return json({ content: data.choices[0].message.content });
   } catch (error) {
-    return json({ error: error.message }, { status: 500 });
+    if (error.name === 'AbortError') {
+      return json({ error: 'Request timeout' }, { status: 504 });
+    }
+    console.error('LLM request failed:', error);
+    return json({ error: 'Internal server error' }, { status: 500 });
   }
 }
