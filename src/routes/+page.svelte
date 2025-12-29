@@ -18,7 +18,9 @@
 
 <main>
     <div id="heading-container">
-        <h1 class="nomint">Thessa</h1>
+        <button onclick={() => (showQueryBar = true)}>
+            <h1 class="nomint">Thessa</h1>
+        </button>
     </div>
     <div id="content-container">
         {#if showQueryBar}
@@ -50,6 +52,14 @@
         justify-content: center;
         gap: 12px;
         margin: var(--spacing-md) 0;
+
+        button {
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            font-family: inherit;
+        }
 
         h1 {
             color: var(--color-accent-light);
