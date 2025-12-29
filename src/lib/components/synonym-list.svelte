@@ -9,13 +9,29 @@
             .replace(/[!.,;?]+$/, "")
             .split("\n"),
     );
+
+    let openPopupIndex = $state(null);
+
+    function handleSynonymClick(index) {
+        openPopupIndex = index;
+    }
+
+    function closePopup() {
+        openPopupIndex = null;
+    }
 </script>
 
 <div id="container">
     <h2>Synonyms for "{query}"</h2>
     <ul>
         {#each synonyms as synonymText, i}
-            <Synonym text={synonymText} index={i}></Synonym>
+            <Synonym
+                text={synonymText}
+                index={i}
+                isOpen={openPopupIndex === i}
+                onOpen={() => handleSynonymClick(i)}
+                onClose={closePopup}
+            ></Synonym>
         {/each}
     </ul>
 </div>

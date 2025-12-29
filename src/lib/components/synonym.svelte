@@ -1,10 +1,66 @@
 <script>
-    let { text, index } = $props();
+    import DefinitionPopup from "./definition-popup.svelte";
+    import CopiedTooltip from "./copied-tooltip.svelte";
+
+    let { text, index, isOpen, onOpen, onClose } = $props();
+
+    let popupX = $state(0);
+    let popupY = $state(0);
+    let showCopied = $state(false);
+    let copiedTimeout = null;
+
+    function handleClick(event) {
+        event.stopPropagation();
+
+        if (isOpen) {
+            // If popup is already open, copy to clipboard
+            navigator.clipboard
+                .writeText(text)
+                .then(() => {
+                    console.log("Copied to clipboard:", text);
+                    showCopied = true;
+                    onClose();
+
+                    // Clear any existing timeout
+                    if (copiedTimeout) {
+                        clearTimeout(copiedTimeout);
+                    }
+
+                    // Hide the "Copied!" message after 1.5 seconds
+                    copiedTimeout = setTimeout(() => {
+                        showCopied = false;
+                        copiedTimeout = null;
+                    }, 1500);
+                })
+                .catch((err) => {
+                    console.error("Failed to copy:", err);
+                });
+        } else {
+            // Open the popup
+            const rect = event.target.getBoundingClientRect();
+            popupX = rect.left;
+            popupY = rect.bottom + 8; // 8px below the button
+            onOpen();
+        }
+    }
 </script>
 
 <li>
-    <button style="--animation-delay: {index * 0.01}s">{text}</button>
+    <button
+        style="--animation-delay: {index * 0.01}s"
+        onclick={handleClick}
+        class:copied={showCopied}
+    >
+        {text}
+        {#if showCopied}
+            <CopiedTooltip></CopiedTooltip>
+        {/if}
+    </button>
 </li>
+
+{#if isOpen}
+    <DefinitionPopup word={text} x={popupX} y={popupY} {onClose} />
+{/if}
 
 <style>
     li {
@@ -22,6 +78,7 @@
         user-select: none;
         font-family: inherit;
         font-size: inherit;
+        position: relative;
 
         animation: fade-in-from-top-left 0.2s ease-out forwards;
         animation-delay: var(--animation-delay);
@@ -37,6 +94,11 @@
         &:active {
             transform: translateY(0);
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        &.copied {
+            background-color: var(--color-accent-transparent-20);
+            border-color: var(--color-accent);
         }
     }
 
