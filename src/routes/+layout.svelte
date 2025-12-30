@@ -34,7 +34,7 @@
 
     <link
         rel="stylesheet"
-        href="https://ethmarks.github.io/css/global.min.css"
+        href="https://ethmarks.vercel.app/css/global.min.css"
     />
     <script
         src="https://ethmarks.vercel.app/js/ethmarks-components.js"
