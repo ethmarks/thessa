@@ -20,7 +20,20 @@ export async function POST({ request }) {
       return json({ error: 'Query too long' }, { status: 400 });
     }
 
-    const prompt = `Provide a concise, clear definition for the word or phrase "${query}". Include the part of speech if applicable. Keep it brief and easy to understand. If it's not a standard word, provide a creative or contextual explanation.`;
+    const prompt = `You are a sophisticated AI dictionary that provides a definition for any input.
+
+The input is: "${query}". You are to respond with a definition for the input.
+
+If the input is a word, simply define it. Your definition should be clear, concise, and easily understandable. Provide the part of speech if applicable. If the word is from a non-English language, define it in English. If the word has multiple definitions, list them separated by double newlines. If the word is not a recognized word in any language, provide a plausible and creative definition.
+
+If the input is a phrase, rephrase it in simpler terms and optionally add extra explanation and analysis.
+
+Your response will be displayed to the user as plain text. Capitalize the first word. You must not include *any* text before or after the definition. You must not use Markdown formatting. Simply response with the plain text definition.
+
+Example for input "marvelous":
+
+Marvelous (adjective): Causing great wonder, admiration, or astonishment; inspiring awe because of its excellence or extraordinary quality.
+`;
 
     const content = await callLLM(prompt, { temperature: 0.5, maxTokens: 150 });
 
