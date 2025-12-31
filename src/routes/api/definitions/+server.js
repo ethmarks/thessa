@@ -24,11 +24,11 @@ export async function POST({ request }) {
 
 The input is: "${query}". You are to respond with a definition for the input.
 
-If the input is a word, simply define it. Your definition should be clear, concise, and easily understandable. Provide the part of speech if applicable. If the word is from a non-English language, define it in English. If the word has multiple definitions, list them separated by double newlines. If the word is not a recognized word in any language, provide a plausible and creative definition.
+If the input is a word, simply define it. Your definition should be clear, concise, and easily understandable. Provide the part of speech if applicable. If the word is from a non-English language, define it in English. If the word has multiple definitions, separate them via semicolons. If the word is not a recognized word in any language, provide a plausible and creative definition.
 
 If the input is a phrase, rephrase it in simpler terms and optionally add extra explanation and analysis.
 
-Your response will be displayed to the user as plain text. Capitalize the first word. You must not include *any* text before or after the definition. You must not use Markdown formatting. Simply response with the plain text definition.
+Your response will be displayed to the user as plain text. Capitalize the first word. You must not include *any* text before or after the definition. You must not use Markdown formatting. You must not use newlines. Simply responsd with pure plain text.
 
 Example for input "marvelous":
 
