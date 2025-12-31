@@ -2,6 +2,10 @@
 
 Thessa is an intelligent vocabulary tool that uses AI to provide relevant synonyms for almost any input. Whether you're trying to mix up your diction, learn new terminology, or just trying to find that word on the tip of your tongue, Thessa can help.
 
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://thessa.vercel.app/)
+[![Made with SvelteKit](https://img.shields.io/badge/Made%20with-SvelteKit-ff3e00?logo=svelte)](https://kit.svelte.dev/)
+
 [![Screenshot of the Thessa interface with the input bar open](/.github/screenshot.png)](https://thessa.vercel.app/)
 
 ## Tech Stack
