@@ -28,7 +28,7 @@ If the input is a word, simply define it. Your definition should be clear, conci
 
 If the input is a phrase, rephrase it in simpler terms and optionally add extra explanation and analysis.
 
-Your response will be displayed to the user as plain text. Capitalize the first word. You must not include *any* text before or after the definition. You must not use Markdown formatting. You must not use newlines. Simply responsd with pure plain text.
+Your response will be displayed to the user as plain text. Capitalize the first word. You must not include *any* text before or after the definition. You must not use Markdown formatting. You must not use newlines. Simply respond with pure plain text.
 
 Example for input "marvelous":
 
