@@ -118,7 +118,7 @@ Thessa uses two custom prompts: one for generating synonyms and one for generati
 ## Versions
 
 - **Thessa V1**: the original version of Thessa, created in May of 2025. It was written in vanilla HTML/CSS/JS later retrofitted with Vite. It used [llm7.io](https://llm7.io/)'s Anonymous tier as the LLM provider, which enabled it to run as a static site without any server-side API keys. It was hosted on GitHub Pages. The final version of Thessa V1 is accessible [here](https://github.com/ethmarks/thessa/tree/745a7ba29eea522d655c7330434ba60506f60ad6).
-- **Thessa V2**: a ground-up rewrite of V1 created in December of 2025. It's written in SvelteKit, uses Cerebras API, and is hosted on Vercel.
+- **Thessa V2 (current)**: a ground-up rewrite of V1 created in December of 2025. It's written in SvelteKit, uses Cerebras API, and is hosted on Vercel.
 
 ## License
 
