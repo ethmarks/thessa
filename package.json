@@ -1,9 +1,24 @@
 {
   "name": "thessa",
+  "version": "2.0.0",
   "private": true,
-  "version": "0.0.1",
-  "type": "module",
   "description": "AI-powered thesaurus",
+  "type": "module",
+  "author": "ethmarks",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ethmarks/thessa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ethmarks/thessa/issues"
+  },
+  "homepage": "https://thessa.vercel.app/",
+  "keywords": [
+    "thesaurus",
+    "ai",
+    "synonyms"
+  ],
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -17,17 +32,6 @@
     "svelte": "^5.45.6",
     "vite": "^7.2.6"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ethmarks/thessa.git"
-  },
-  "keywords": [
-    "thesaurus",
-    "ai",
-    "synonyms"
-  ],
-  "author": "ethmarks",
-  "license": "Apache-2.0",
   "dependencies": {
     "@vercel/analytics": "^1.6.1"
   }
