@@ -33,7 +33,7 @@ Thessa is hosted on [Vercel](https://vercel.com/). I chose Vercel because I was 
 - Click on any of the synonyms to read its AI-generated definition
 - Double-click on a synonym to copy it to your clipboard.
 
-### Limits
+## Limits
 
 Thessa is free for everyone, you don't need to sign in, and I don't impose any usage limits.
 
