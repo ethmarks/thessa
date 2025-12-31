@@ -38,6 +38,17 @@
                 <Spinner></Spinner>
             {:then response}
                 <SynonymList query={userQuery} textRaw={response}></SynonymList>
+            {:catch error}
+                <div class="error-message">
+                    <h2>Error</h2>
+                    <p>
+                        {error.message ||
+                            "Failed to load synonyms. Please try again."}
+                    </p>
+                    <button onclick={() => (showQueryBar = true)}
+                        >Try Again</button
+                    >
+                </div>
             {/await}
         {/if}
     </div>
@@ -84,5 +95,44 @@
     #content-container {
         display: flex;
         width: 100%;
+    }
+
+    .error-message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        gap: var(--spacing-md);
+        padding: var(--spacing-xl);
+        text-align: center;
+        color: var(--color-text);
+
+        h2 {
+            color: #ff6464;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        button {
+            background: var(--color-accent-light);
+            color: var(--color-background);
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+
+            &:hover {
+                opacity: 0.8;
+            }
+        }
     }
 </style>
