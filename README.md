@@ -34,8 +34,9 @@ Thessa is hosted on [Vercel](https://vercel.com/). I chose Vercel because I was 
 
 ### Extra Functionality
 
-- Click on any of the synonyms to read its AI-generated definition
+- Click on any of the synonyms to read its AI-generated definition.
 - Double-click on a synonym to copy it to your clipboard.
+- Click on the "Thessa" heading to return to the input page.
 
 ## Limits
 
