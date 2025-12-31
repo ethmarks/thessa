@@ -25,7 +25,7 @@ Thessa is hosted on [Vercel](https://vercel.com/). I chose Vercel because I was 
 ### Basic Usage
 
 1. Visit **<https://thessa.vercel.app/>**.
-2. Type any word into the input box and press the enter.
+2. Type any word into the input box and press enter.
 3. Thessa will generate dozens of synonyms for your input.
 
 ### Extra Functionality
