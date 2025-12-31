@@ -33,6 +33,14 @@ Thessa is hosted on [Vercel](https://vercel.com/). I chose Vercel because I was 
 - Click on any of the synonyms to read its AI-generated definition
 - Double-click on a synonym to copy it to your clipboard.
 
+### Limits
+
+Thessa is free for everyone, you don't need to sign in, and I don't impose any usage limits.
+
+I do, however, have upstream usage limits: my Cerebras key is limited to 30 requests per minute, 900 requests per hour, and 14,400 requests per day. These limits are shared across *all users*. However, I don't think that Thessa will ever reach those usage limits. If I turn out to be wrong, I'll consider implementing per-user rate limiting. Until then, Thessa will remain unrestricted.
+
+Because my API key limits are a shared resource, I've tried to mitigate the surface area for abusing Thessa. For example, had I just exposed a generic `/api/llm/` endpoint, anybody could (and likely would) exploit Thessa's API for their own unrelated projects. Instead, Thessa exposes the `/api/synonyms` and `/api/definitions/` endpoints which prefill most of the prompt except for the input, meaning my APIs are effectively useless for other people's general LLM projects.
+
 ## Installation
 
 To run Thessa locally, follow these instructions.
