@@ -35,7 +35,7 @@ Example for input "marvelous":
 Marvelous (adjective): Causing great wonder, admiration, or astonishment; inspiring awe because of its excellence or extraordinary quality.
 `;
 
-    const content = await callLLM(prompt, { temperature: 0.5, maxTokens: 150 });
+    const content = await callLLM(prompt, { temperature: 0.5, maxTokens: 500 });
 
     return json({ content });
   } catch (error) {
