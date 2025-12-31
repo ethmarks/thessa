@@ -30,7 +30,7 @@
         property="twitter:description"
         content="An AI-powered thesaurus that intelligently generates synonyms."
     />
-    <link rel="canonical" href="https://ethmarks.github.io/thessa" />
+    <link rel="canonical" href="https://thessa.vercel.app/" />
 
     <link
         rel="stylesheet"
