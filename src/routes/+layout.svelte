@@ -1,9 +1,8 @@
 <script>
     import favicon from "$lib/assets/favicon.ico";
-    import { dev } from "$app/environment";
-    import { injectAnalytics } from "@vercel/analytics/sveltekit";
+    import { inject } from "@vercel/analytics";
 
-    injectAnalytics({ mode: dev ? "development" : "production" });
+    inject();
 
     let { children } = $props();
 </script>
