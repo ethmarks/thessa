@@ -1,0 +1,67 @@
+<script>
+    import { onMount } from "svelte";
+    import { fade } from "svelte/transition";
+
+    let inputElement;
+    let query = $state("");
+
+    let { onSubmit = () => {} } = $props();
+
+    onMount(() => {
+        inputElement?.focus();
+    });
+
+    function handleKeydown(event) {
+        if (event.key === "Enter") {
+            handleSubmit();
+        }
+    }
+
+    function handleSubmit() {
+        if (query.trim()) {
+            onSubmit(query.trim());
+            query = "";
+        }
+    }
+</script>
+
+<input
+    type="text"
+    placeholder="Enter a word or phrase (e.g. 'brilliant')"
+    bind:value={query}
+    bind:this={inputElement}
+    onkeydown={handleKeydown}
+    in:fade={{ duration: 100 }}
+/>
+
+<style>
+    input {
+        margin: var(--spacing-lg) auto 0;
+        padding: 1rem 1.5rem;
+        width: 100%;
+        max-width: 800px;
+
+        border-radius: 999px;
+        border: var(--border-accent-t);
+        outline: none;
+        background: rgba(255, 255, 255, 0.03);
+
+        text-align: center;
+        color: var(--color-text);
+        font-size: var(--font-size-h4);
+        font-family: var(--font-secondary);
+        caret-color: var(--color-accent);
+
+        transition-property: border, background, box-shadow;
+        transition-duration: var(--transition-duration);
+        transition-timing-function: var(--transition-timing);
+
+        &:focus {
+            border: var(--border-accent);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow:
+                0 0 0 4px var(--color-accent-transparent-20),
+                0 2px 8px rgba(0, 0, 0, 0.1) inset;
+        }
+    }
+</style>
